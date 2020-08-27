@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  iroha:
+    image: hyperledger/iroha:latest
+    depends_on:
+      - postgres
+    entrypoint: /bin/bash
+    environment:
+      - KEY=node0
+    networks:
+      - iroha-network
+    ports:
+      - "50051:50051"
+    tty: true
+    volumes:
+      - ${PWD}/iroha/example:/opt/iroha_data
+      - blockstore:/tmp/block_store
+
+  postgres:
+    image: postgres:9.5
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mysecretpassword
+    ports:
+      - "5432:5432"
+    networks:
+      - iroha-network
+
+networks:
+  iroha-network:
+    driver: bridge
+
+volumes:
+  blockstore:
